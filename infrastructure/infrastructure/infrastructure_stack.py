@@ -586,10 +586,54 @@ class InfrastructureStack(Stack):
             )
         )
 
+        # Security Groups for ECS Services
+        self.customer_service_sg = ec2.SecurityGroup(
+            self, "CustomerServiceSecurityGroup",
+            vpc=self.vpc,
+            allow_all_outbound=True,
+            description="Security group for Customer Service"
+        )
+        
+        self.portfolio_service_sg = ec2.SecurityGroup(
+            self, "PortfolioServiceSecurityGroup",
+            vpc=self.vpc,
+            allow_all_outbound=True,
+            description="Security group for Portfolio Service"
+        )
+        
+        self.asset_service_sg = ec2.SecurityGroup(
+            self, "AssetServiceSecurityGroup",
+            vpc=self.vpc,
+            allow_all_outbound=True,
+            description="Security group for Asset Service"
+        )
+
+        # Allow ALB to reach ECS services
+        self.customer_service_sg.add_ingress_rule(
+            peer=self.alb.connections.security_groups[0],
+            connection=ec2.Port.tcp(8000),
+            description="Allow ALB to reach Customer Service"
+        )
+        
+        self.portfolio_service_sg.add_ingress_rule(
+            peer=self.alb.connections.security_groups[0],
+            connection=ec2.Port.tcp(8001),
+            description="Allow ALB to reach Portfolio Service"
+        )
+        
+        self.asset_service_sg.add_ingress_rule(
+            peer=self.alb.connections.security_groups[0],
+            connection=ec2.Port.tcp(8002),
+            description="Allow ALB to reach Asset Service"
+        )
+
         # Task Definitions and Services
         self._create_customer_service()
         self._create_portfolio_service()
         self._create_asset_service()
+        
+        # Create target groups and configure ALB routing
+        self._configure_load_balancer_routing()
 
     def _create_customer_service(self):
         """Create Customer Service ECS task definition and service"""
@@ -636,10 +680,10 @@ class InfrastructureStack(Stack):
             task_definition=customer_task_def,
             desired_count=1,
             service_name="customer-service",
-            assign_public_ip=True
+            assign_public_ip=True,
+            security_groups=[self.customer_service_sg],
+            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC)
         )
-
-        # Target groups will be configured separately after services are created
 
     def _create_portfolio_service(self):
         """Create Portfolio Service ECS task definition and service"""
@@ -686,10 +730,10 @@ class InfrastructureStack(Stack):
             task_definition=portfolio_task_def,
             desired_count=1,
             service_name="portfolio-service",
-            assign_public_ip=True
+            assign_public_ip=True,
+            security_groups=[self.portfolio_service_sg],
+            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC)
         )
-
-        # Target groups will be configured separately after services are created
 
     def _create_asset_service(self):
         """Create Asset Service ECS task definition and service"""
@@ -737,7 +781,109 @@ class InfrastructureStack(Stack):
             task_definition=asset_task_def,
             desired_count=1,
             service_name="asset-service",
-            assign_public_ip=True
+            assign_public_ip=True,
+            security_groups=[self.asset_service_sg],
+            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC)
         )
 
-        # Target groups will be configured separately after services are created
+    def _configure_load_balancer_routing(self):
+        """Configure ALB target groups and routing rules"""
+        
+        # Customer Service Target Group
+        customer_target_group = elbv2.ApplicationTargetGroup(
+            self, "CustomerServiceTargetGroup",
+            target_group_name="customer-service-tg",
+            port=8000,
+            protocol=elbv2.ApplicationProtocol.HTTP,
+            vpc=self.vpc,
+            target_type=elbv2.TargetType.IP,
+            health_check=elbv2.HealthCheck(
+                path="/health",
+                protocol=elbv2.Protocol.HTTP,
+                port="8000",
+                interval=Duration.seconds(30),
+                timeout=Duration.seconds(10),
+                healthy_threshold_count=2,
+                unhealthy_threshold_count=5
+            )
+        )
+        
+        # Portfolio Service Target Group
+        portfolio_target_group = elbv2.ApplicationTargetGroup(
+            self, "PortfolioServiceTargetGroup",
+            target_group_name="portfolio-service-tg",
+            port=8001,
+            protocol=elbv2.ApplicationProtocol.HTTP,
+            vpc=self.vpc,
+            target_type=elbv2.TargetType.IP,
+            health_check=elbv2.HealthCheck(
+                path="/health",
+                protocol=elbv2.Protocol.HTTP,
+                port="8001",
+                interval=Duration.seconds(30),
+                timeout=Duration.seconds(10),
+                healthy_threshold_count=2,
+                unhealthy_threshold_count=5
+            )
+        )
+        
+        # Asset Service Target Group
+        asset_target_group = elbv2.ApplicationTargetGroup(
+            self, "AssetServiceTargetGroup",
+            target_group_name="asset-service-tg",
+            port=8002,
+            protocol=elbv2.ApplicationProtocol.HTTP,
+            vpc=self.vpc,
+            target_type=elbv2.TargetType.IP,
+            health_check=elbv2.HealthCheck(
+                path="/health",
+                protocol=elbv2.Protocol.HTTP,
+                port="8002",
+                interval=Duration.seconds(30),
+                timeout=Duration.seconds(10),
+                healthy_threshold_count=2,
+                unhealthy_threshold_count=5
+            )
+        )
+        
+        # Associate ECS Services with Target Groups
+        customer_target_group.add_target(self.customer_service)
+        portfolio_target_group.add_target(self.portfolio_service)
+        asset_target_group.add_target(self.asset_service)
+        
+        # ALB Listener Rules
+        self.alb_listener.add_action(
+            "CustomerServiceRule",
+            priority=100,
+            conditions=[
+                elbv2.ListenerCondition.path_patterns(["/customers*"])
+            ],
+            action=elbv2.ListenerAction.forward([customer_target_group])
+        )
+        
+        self.alb_listener.add_action(
+            "PortfolioServiceRule",
+            priority=200,
+            conditions=[
+                elbv2.ListenerCondition.path_patterns(["/portfolios*"])
+            ],
+            action=elbv2.ListenerAction.forward([portfolio_target_group])
+        )
+        
+        self.alb_listener.add_action(
+            "AssetServiceInvestmentsRule",
+            priority=300,
+            conditions=[
+                elbv2.ListenerCondition.path_patterns(["/investments*"])
+            ],
+            action=elbv2.ListenerAction.forward([asset_target_group])
+        )
+        
+        self.alb_listener.add_action(
+            "AssetServiceAssetsRule",
+            priority=400,
+            conditions=[
+                elbv2.ListenerCondition.path_patterns(["/assets*"])
+            ],
+            action=elbv2.ListenerAction.forward([asset_target_group])
+        )
