@@ -548,6 +548,3 @@ aws elbv2 describe-target-health --target-group-arn {target-group-arn}
 4. Add tests
 5. Submit a pull request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
