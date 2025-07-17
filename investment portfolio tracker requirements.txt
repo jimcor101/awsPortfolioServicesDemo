@@ -1,0 +1,110 @@
+Investment Portfolio Tracker
+Microservices for Customer, Portfolio and Assets
+
+Initial AWS Core Services to Use
+
+- Amazon ECS (Fargate)
+- API Gateway
+- Dynamo DB
+- Eventbridge / SNS / SQS
+- Secrets Manager / Parameter Store
+- CloudWatch + X-Ray + OpenTelemetry
+- IAM
+
+Prototype Microservices
+
+- Customer Service - Handles Registration, Customer Profile Viewing (Dynamo DB)
+
+- Portfolio Service - Maps Customers to Assets (Dynamo DB)
+
+- Asset Service - gets real-time asset prices from external APIs (HTTP + caching)
+
+The logical data model would be:
+
+# Core Entities and Data Model Structure for Investment Portfolio Tracker
+
+# --- ENTITY 1: Customer ---
+# Represents the end-user or account holder.
+Customer = {
+    "customer_id": "uuid",
+    "first_name": "string",
+    "last_name": "string",
+    "email": "string",
+    "phone": "string",
+    "address": {
+        "street": "string",
+        "city": "string",
+        "state": "string",
+        "zip_code": "string",
+        "country": "string"
+    },
+    "created_at": "datetime",
+    "updated_at": "datetime"
+}
+
+# --- ENTITY 2: Portfolio ---
+# Each customer may have multiple portfolios (e.g., IRA, Brokerage, 401k).
+Portfolio = {
+    "portfolio_id": "uuid",
+    "customer_id": "uuid",  # foreign key to Customer
+    "name": "string",        # e.g., 'Retirement Fund'
+    "type": "string",        # e.g., 'Brokerage', 'IRA'
+    "created_at": "datetime",
+    "updated_at": "datetime"
+}
+
+# --- ENTITY 3: Investment ---
+# Represents a single holding in a portfolio, i.e., an ownership stake in a financial instrument.
+Investment = {
+    "investment_id": "uuid",
+    "portfolio_id": "uuid",  # foreign key to Portfolio
+    "ticker_symbol": "string",   # e.g., 'AAPL', 'GOOGL'
+    "instrument_type": "string", # e.g., 'Stock', 'ETF', 'Bond'
+    "quantity": "float",
+    "purchase_price": "float",  # price per unit at purchase
+    "purchase_date": "date",
+    "current_price": "float",   # can be updated from market data
+    "last_updated": "datetime"
+}
+
+# --- ENTITY 4: Instrument (Optional Normalization) ---
+# You can optionally normalize the instrument/ticker data for metadata reuse.
+Instrument = {
+    "ticker_symbol": "string",
+    "name": "string",           # e.g., 'Apple Inc.'
+    "exchange": "string",       # e.g., 'NASDAQ'
+    "instrument_type": "string",
+    "sector": "string",
+    "currency": "string"
+}
+
+# --- RELATIONSHIPS ---
+# Customer 1---N Portfolio
+# Portfolio 1---N Investment
+# Investment N---1 Instrument (optional)
+
+
+Use API Gateway to route external calls to these services.
+
+Deploy via:
+Containers (ECS/EKS)
+IaC (CDK)
+
+Eventually we would like to add 
+IaC (Terraform)
+CI/CD (GitHub + AWS CodePipeline)
+
+
+Starter Template
+
+- 3 services (Python)
+- Docker + AWS CDK
+- CI/CD Github Actions
+- Cloudformation / CDK Infra Set up
+
+
+
+
+
+
+
