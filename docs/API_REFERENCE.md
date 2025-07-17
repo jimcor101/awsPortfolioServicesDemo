@@ -4,7 +4,7 @@
 
 This document provides detailed API reference for the AWS Portfolio Services Demo. All services are accessible through the Application Load Balancer.
 
-**Base URL**: `http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com`
+**Base URL**: `http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com`
 
 ## Authentication
 

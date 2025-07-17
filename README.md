@@ -184,7 +184,7 @@ Investment {
 ## 🌐 API Endpoints
 
 ### Load Balancer URL
-**Base URL**: `http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com`
+**Base URL**: `http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com`
 
 ### Customer Service Endpoints
 
@@ -205,7 +205,7 @@ GET /customers/email/{email}      # Get customer by email
 
 #### Example: Create Customer
 ```bash
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Doe",
@@ -230,7 +230,7 @@ GET /customers/{customer_id}/portfolios/summary  # Get portfolio summary
 
 #### Example: Create Portfolio
 ```bash
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios \
   -H "Content-Type: application/json" \
   -d '{
     "customer_id": "cust-12345",
@@ -267,7 +267,7 @@ POST /portfolios/{portfolio_id}/sync-values # Sync portfolio values
 
 #### Example: Create Investment
 ```bash
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments \
   -H "Content-Type: application/json" \
   -d '{
     "portfolio_id": "port-12345",
@@ -280,7 +280,7 @@ curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/
 
 #### Example: Get Asset Price
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/assets/AAPL/price
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/assets/AAPL/price
 ```
 
 ## 🔧 Configuration

@@ -44,12 +44,23 @@ Relationships: Customer 1→N Portfolio 1→N Investment N→1 Instrument
 
 ## Development
 
-Since this appears to be a requirements/planning document, there are no build, test, or lint commands yet. The project is structured to implement:
+The project is now fully deployed and operational:
 
-- 3 Python microservices
-- Docker containerization
-- AWS CDK infrastructure
-- CI/CD via GitHub Actions
+### Live Environment
+- **Base URL**: `http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com`
+- **ECS Cluster**: `portfolio-tracker-cluster`
+- **Services**: customer-service, portfolio-service, asset-service (all running)
+
+### Sample Data
+The database is populated with sample data:
+- 3 customers (John Smith, Sarah Johnson, Michael Davis)
+- 4 portfolios (IRA, Brokerage, Roth IRA, 401k)
+- 5 investments (AAPL, MSFT, GOOGL, TSLA, SPY)
+
+### Build and Deployment
+- Build images: `./scripts/build-and-push.sh`
+- Deploy infrastructure: `./scripts/deploy-infrastructure.sh`
+- Configure load balancer: `./scripts/configure-load-balancer.sh`
 
 ## Future Enhancements
 
