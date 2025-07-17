@@ -3,7 +3,13 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(aws ec2 describe-security-groups:*)",
-      "Bash(git remote add:*)"
+      "Bash(git remote add:*)",
+      "Bash(aws ecs describe-services:*)",
+      "Bash(aws ecs describe-tasks:*)",
+      "Bash(aws logs describe-log-groups:*)",
+      "Bash(aws logs describe-log-streams:*)",
+      "Bash(aws logs get-log-events:*)",
+      "Bash(aws elbv2 delete-rule:*)"
     ],
     "deny": []
   }
