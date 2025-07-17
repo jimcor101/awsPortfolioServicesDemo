@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(aws ec2 describe-security-groups:*)",
+      "Bash(git remote add:*)"
+    ],
+    "deny": []
+  }
+}
