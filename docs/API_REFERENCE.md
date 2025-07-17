@@ -65,7 +65,7 @@ List all customers with pagination.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers?limit=50
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers?limit=50
 ```
 
 **Response**:
@@ -89,35 +89,56 @@ Create a new customer.
 **Request Body**:
 ```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "phone": "+1-555-0123",
-  "address": "123 Main St, City, ST 12345"
+  "first_name": "John",
+  "last_name": "Smith",
+  "email": "john.smith@example.com",
+  "phone": "+1-555-123-4567",
+  "address": {
+    "street": "123 Main Street",
+    "city": "New York",
+    "state": "NY",
+    "zip_code": "10001",
+    "country": "USA"
+  }
 }
 ```
 
 **Example Request**:
 ```bash
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "John Doe",
-    "email": "john@example.com",
-    "phone": "+1-555-0123",
-    "address": "123 Main St, City, ST 12345"
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@example.com",
+    "phone": "+1-555-123-4567",
+    "address": {
+      "street": "123 Main Street",
+      "city": "New York",
+      "state": "NY",
+      "zip_code": "10001",
+      "country": "USA"
+    }
   }'
 ```
 
 **Response** (201 Created):
 ```json
 {
-  "customer_id": "cust-12345",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "phone": "+1-555-0123",
-  "address": "123 Main St, City, ST 12345",
-  "created_at": "2024-01-15T10:30:00Z",
-  "updated_at": "2024-01-15T10:30:00Z"
+  "first_name": "John",
+  "last_name": "Smith",
+  "email": "john.smith@example.com",
+  "phone": "+1-555-123-4567",
+  "address": {
+    "street": "123 Main Street",
+    "city": "New York",
+    "state": "NY",
+    "zip_code": "10001",
+    "country": "USA"
+  },
+  "customer_id": "bff184c0-af4a-4052-9ec3-3e120cbfcfa1",
+  "created_at": "2025-07-17T21:43:35.489823",
+  "updated_at": "2025-07-17T21:43:35.489826"
 }
 ```
 
@@ -126,7 +147,7 @@ Get customer by ID.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers/cust-12345
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers/cust-12345
 ```
 
 **Response**:
@@ -155,7 +176,7 @@ Update customer information.
 
 **Example Request**:
 ```bash
-curl -X PUT http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers/cust-12345 \
+curl -X PUT http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers/cust-12345 \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Smith",
@@ -168,7 +189,7 @@ Delete a customer.
 
 **Example Request**:
 ```bash
-curl -X DELETE http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers/cust-12345
+curl -X DELETE http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers/cust-12345
 ```
 
 **Response**:
@@ -183,7 +204,7 @@ Get customer by email address.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers/email/john@example.com
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers/email/john@example.com
 ```
 
 ## Portfolio Service API
@@ -198,7 +219,7 @@ List all portfolios.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios
 ```
 
 **Response**:
@@ -223,28 +244,32 @@ Create a new portfolio.
 **Request Body**:
 ```json
 {
-  "customer_id": "cust-12345",
-  "portfolio_name": "My Retirement Portfolio",
-  "portfolio_type": "IRA"
+  "name": "John's IRA Account",
+  "type": "IRA",
+  "customer_id": "bff184c0-af4a-4052-9ec3-3e120cbfcfa1",
+  "description": "Traditional IRA for retirement savings"
 }
 ```
 
 **Portfolio Types**:
+- `Brokerage` - Taxable Brokerage Account
 - `IRA` - Individual Retirement Account
-- `ROTH_IRA` - Roth IRA
-- `401K` - 401(k) Plan
-- `BROKERAGE` - Taxable Brokerage Account
-- `HSA` - Health Savings Account
-- `529` - 529 Education Savings Plan
+- `Roth IRA` - Roth IRA
+- `Traditional 401k` - Traditional 401(k) Plan
+- `Roth 401k` - Roth 401(k) Plan
+- `Savings` - Savings Account
+- `Checking` - Checking Account
+- `Other` - Other Account Type
 
 **Example Request**:
 ```bash
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios \
   -H "Content-Type: application/json" \
   -d '{
-    "customer_id": "cust-12345",
-    "portfolio_name": "My Retirement Portfolio",
-    "portfolio_type": "IRA"
+    "name": "John'\''s IRA Account",
+    "type": "IRA",
+    "customer_id": "bff184c0-af4a-4052-9ec3-3e120cbfcfa1",
+    "description": "Traditional IRA for retirement savings"
   }'
 ```
 
@@ -253,7 +278,7 @@ Get portfolio by ID.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios/port-12345
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios/port-12345
 ```
 
 #### PUT /portfolios/{portfolio_id}
@@ -272,7 +297,7 @@ Delete a portfolio.
 
 **Example Request**:
 ```bash
-curl -X DELETE http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios/port-12345
+curl -X DELETE http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios/port-12345
 ```
 
 #### GET /customers/{customer_id}/portfolios
@@ -280,7 +305,7 @@ Get all portfolios for a customer.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers/cust-12345/portfolios
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers/cust-12345/portfolios
 ```
 
 #### GET /customers/{customer_id}/portfolios/summary
@@ -288,7 +313,7 @@ Get portfolio summary for a customer.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers/cust-12345/portfolios/summary
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers/cust-12345/portfolios/summary
 ```
 
 **Response**:
@@ -323,7 +348,7 @@ List all investments.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments
 ```
 
 **Response**:
@@ -353,9 +378,10 @@ Create a new investment.
 **Request Body**:
 ```json
 {
-  "portfolio_id": "port-12345",
+  "portfolio_id": "157dcb03-31f1-42c6-8d14-c2587abe3693",
   "ticker_symbol": "AAPL",
-  "quantity": 100,
+  "instrument_type": "Stock",
+  "quantity": 50,
   "purchase_price": 150.00,
   "purchase_date": "2024-01-15"
 }
@@ -363,12 +389,13 @@ Create a new investment.
 
 **Example Request**:
 ```bash
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments \
   -H "Content-Type: application/json" \
   -d '{
-    "portfolio_id": "port-12345",
+    "portfolio_id": "157dcb03-31f1-42c6-8d14-c2587abe3693",
     "ticker_symbol": "AAPL",
-    "quantity": 100,
+    "instrument_type": "Stock",
+    "quantity": 50,
     "purchase_price": 150.00,
     "purchase_date": "2024-01-15"
   }'
@@ -379,7 +406,7 @@ Get investment by ID.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments/inv-12345
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments/inv-12345
 ```
 
 #### PUT /investments/{investment_id}
@@ -398,7 +425,7 @@ Delete an investment.
 
 **Example Request**:
 ```bash
-curl -X DELETE http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments/inv-12345
+curl -X DELETE http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments/inv-12345
 ```
 
 #### GET /portfolios/{portfolio_id}/investments
@@ -406,7 +433,7 @@ Get all investments for a portfolio.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios/port-12345/investments
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios/port-12345/investments
 ```
 
 #### GET /portfolios/{portfolio_id}/investments/summary
@@ -414,7 +441,7 @@ Get investment summary for a portfolio.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios/port-12345/investments/summary
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios/port-12345/investments/summary
 ```
 
 **Response**:
@@ -449,7 +476,7 @@ Get current price for an asset.
 
 **Example Request**:
 ```bash
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/assets/AAPL/price
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/assets/AAPL/price
 ```
 
 **Response**:
@@ -479,7 +506,7 @@ Get current prices for multiple assets.
 
 **Example Request**:
 ```bash
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/assets/prices \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/assets/prices \
   -H "Content-Type: application/json" \
   -d '{
     "ticker_symbols": ["AAPL", "GOOGL", "MSFT"]
@@ -525,10 +552,10 @@ Update prices for all investments or specific tickers.
 **Example Request**:
 ```bash
 # Update all investment prices
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments/update-prices
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments/update-prices
 
 # Update specific tickers
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments/update-prices \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments/update-prices \
   -H "Content-Type: application/json" \
   -d '{
     "ticker_symbols": ["AAPL", "GOOGL"]
@@ -555,7 +582,7 @@ Clear all cached prices.
 
 **Example Request**:
 ```bash
-curl -X DELETE http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/cache/prices
+curl -X DELETE http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/cache/prices
 ```
 
 ### Portfolio Synchronization
@@ -565,7 +592,7 @@ Synchronize portfolio values with current investment data.
 
 **Example Request**:
 ```bash
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios/port-12345/sync-values
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios/port-12345/sync-values
 ```
 
 **Response**:
@@ -594,48 +621,88 @@ curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/
 - **Portfolio Service**: 500 requests per minute
 - **Asset Service**: 200 requests per minute (due to external API limits)
 
+## Sample Data
+
+The system comes pre-populated with sample data for testing:
+
+### Customers
+- **John Smith** (ID: `bff184c0-af4a-4052-9ec3-3e120cbfcfa1`) - New York, NY
+- **Sarah Johnson** (ID: `7d4898c3-8c7d-4795-9655-589a3ce71869`) - San Francisco, CA
+- **Michael Davis** (ID: `8f638692-45bb-4375-8e2b-396e010198bc`) - Austin, TX
+
+### Portfolios
+- **John's IRA Account** (ID: `157dcb03-31f1-42c6-8d14-c2587abe3693`) - Traditional IRA
+- **John's Brokerage Account** (ID: `cb263063-361c-460f-9f3d-fdccf458299f`) - Brokerage
+- **Sarah's Roth IRA** (ID: `acdda86d-d69a-4f1e-ad5a-2d62a169964d`) - Roth IRA
+- **Michael's 401k** (ID: `667a7bd2-add3-4eee-a54a-f067cf1ddf50`) - Traditional 401k
+
+### Investments
+- **AAPL** (50 shares @ $150.00) in John's IRA
+- **MSFT** (25 shares @ $300.00) in John's IRA
+- **GOOGL** (10 shares @ $120.00) in John's Brokerage
+- **TSLA** (15 shares @ $200.00) in Sarah's Roth IRA
+- **SPY** (20 shares @ $400.00) in Michael's 401k
+
+### Test with Sample Data
+```bash
+# Get all customers
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers
+
+# Get John's details
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers/bff184c0-af4a-4052-9ec3-3e120cbfcfa1
+
+# Get John's IRA portfolio
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios/157dcb03-31f1-42c6-8d14-c2587abe3693
+
+# Get all investments
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments
+
+# Get current AAPL price
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/assets/AAPL/price
+```
+
 ## Sample Integration Workflows
 
 ### Complete Portfolio Setup
 
 ```bash
 # 1. Create customer
-CUSTOMER_ID=$(curl -s -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/customers \
+CUSTOMER_ID=$(curl -s -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/customers \
   -H "Content-Type: application/json" \
   -d '{"name": "John Doe", "email": "john@example.com", "phone": "+1-555-0123", "address": "123 Main St"}' \
   | jq -r '.customer_id')
 
 # 2. Create portfolio
-PORTFOLIO_ID=$(curl -s -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios \
+PORTFOLIO_ID=$(curl -s -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios \
   -H "Content-Type: application/json" \
   -d "{\"customer_id\": \"$CUSTOMER_ID\", \"portfolio_name\": \"My Portfolio\", \"portfolio_type\": \"IRA\"}" \
   | jq -r '.portfolio_id')
 
 # 3. Add investment
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments \
   -H "Content-Type: application/json" \
   -d "{\"portfolio_id\": \"$PORTFOLIO_ID\", \"ticker_symbol\": \"AAPL\", \"quantity\": 100, \"purchase_price\": 150.00, \"purchase_date\": \"2024-01-15\"}"
 
 # 4. Update prices
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments/update-prices
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments/update-prices
 
 # 5. Get portfolio summary
-curl http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/portfolios/$PORTFOLIO_ID/investments/summary
+curl http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/portfolios/$PORTFOLIO_ID/investments/summary
 ```
 
 ### Price Monitoring
 
 ```bash
 # Monitor specific assets
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/assets/prices \
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/assets/prices \
   -H "Content-Type: application/json" \
   -d '{"ticker_symbols": ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA"]}'
 
 # Clear cache for fresh data
-curl -X DELETE http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/cache/prices
+curl -X DELETE http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/cache/prices
 
 # Update all investment prices
-curl -X POST http://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/investments/update-prices
+curl -X POST http://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/investments/update-prices
 ```
 
 ## Testing with Postman
@@ -648,7 +715,7 @@ Future versions will include WebSocket support for real-time price updates:
 
 ```javascript
 // Example WebSocket connection
-const ws = new WebSocket('wss://portfolio-tracker-alb-426131923.us-east-1.elb.amazonaws.com/ws');
+const ws = new WebSocket('wss://portfolio-tracker-alb-184744493.us-east-1.elb.amazonaws.com/ws');
 
 ws.onmessage = function(event) {
   const priceUpdate = JSON.parse(event.data);
